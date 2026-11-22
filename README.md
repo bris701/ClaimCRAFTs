@@ -4,6 +4,12 @@
 
 ClaimCRAFTs is an independent community project. It is not affiliated with or endorsed by the developers of BitCraft Online.
 
+## Screenshots
+
+| Crafting Overview | Settings |
+|:---:|:---:|
+| <img src="screenshots/overview.png" alt="ClaimCRAFTs crafting overview" width="340"> | <img src="screenshots/settings.png" alt="ClaimCRAFTs settings" width="340"> |
+  
 ## Features
 
 - **Any claim:** Search for BitCraft claims by name and remember your selection locally.
