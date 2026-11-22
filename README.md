@@ -16,7 +16,7 @@ ClaimCRAFTs is an independent community project. It is not affiliated with or en
 
 ## Download and run
 
-**A prebuilt Windows release has not been published yet.** When releases are available, open the [Releases page](https://github.com/bris701/ClaimCRAFTs/releases), select the newest release, and download its Windows executable or archive. Extract any archive before running the executable.
+**ClaimCRAFTs v0.3.1 is now available!** Download the latest Windows release from the [Releases page](https://github.com/bris701/ClaimCRAFTs/releases/latest). Extract the ZIP archive and run `ClaimCRAFTs.exe`. No separate .NET installation is required.
 
 The planned Windows build is **self-contained**: it includes the .NET runtime and does not require installing .NET separately just to run it. Windows may display an unfamiliar-publisher warning for unsigned community applications; you can instead build the program yourself using the source instructions below.
 
