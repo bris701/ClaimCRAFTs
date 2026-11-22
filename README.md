@@ -1,6 +1,6 @@
 # ClaimCRAFTs
 
-**ClaimCRAFTs v0.3.1** is a free, open-source Windows companion for tracking active public crafting projects in **BitCraft Online** claims. Search for a claim, watch its crafting activity, and see who is crafting—all from a compact desktop overlay.
+**ClaimCRAFTs v0.3.1** is a free, open-source Windows companion for tracking active public crafting projects in **BitCraft Online** claims. Search for a claim, watch its crafting activity, and see who is crafting, all from a compact desktop overlay.
 
 ClaimCRAFTs is an independent community project. It is not affiliated with or endorsed by the developers of BitCraft Online.
 
