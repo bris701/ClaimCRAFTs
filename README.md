@@ -26,6 +26,22 @@ ClaimCRAFTs is an independent community project. It is not affiliated with or en
 
 The planned Windows build is **self-contained**: it includes the .NET runtime and does not require installing .NET separately just to run it. Windows may display an unfamiliar-publisher warning for unsigned community applications; you can instead build the program yourself using the source instructions below.
 
+### File integrity verification
+
+**ClaimCRAFTs v0.3.1 - `ClaimCRAFTs.exe` (SHA-256):**
+
+```text
+1DE8E225EAE2A05755732ADCA22E48DB1386156DF91244B63ED877A5EAFB17CA
+```
+
+To verify the downloaded executable, extract the release ZIP, open PowerShell in the extracted folder, and run:
+
+```powershell
+Get-FileHash .\ClaimCRAFTs.exe -Algorithm SHA256
+```
+
+The resulting hash should match the value above. A matching hash confirms file integrity against the published reference, but does not guarantee the software is malware-free.
+
 ## Build from source (Windows)
 
 You can build ClaimCRAFTs yourself, even if you've never used Git.
