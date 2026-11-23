@@ -40,7 +40,7 @@ public partial class MainWindow : Window
         "Grow ", "Harvest ", "Prepare ", "Construct ", "Build ",
         "Polish ", "Spin ", "Crush ", "Grind ", "Render ",
         "Melt ", "Dye ", "Press ", "Collect ", "Gather ",
-        "Clean ", "Smash "
+        "Clean ", "Smash ", "Braid ", "Upgrade "
     ];
     private LiveFeed? _live;
     private CancellationTokenSource? _selectionToken;
@@ -434,6 +434,7 @@ public partial class MainWindow : Window
             if (!oldById.TryGetValue(craft.Id, out var old) ||
                 old.OwnerId != craft.OwnerId || old.OwnerName != craft.OwnerName ||
                 old.BuildingName != craft.BuildingName || old.RecipeName != craft.RecipeName ||
+                old.OutputName != craft.OutputName ||
                 old.Quantity != craft.Quantity || old.Progress != craft.Progress ||
                 old.ProgressTotal != craft.ProgressTotal || old.Status != craft.Status ||
                 old.LockExpiration != craft.LockExpiration ||
@@ -561,18 +562,21 @@ public partial class MainWindow : Window
 
     private static string CraftLabel(CraftProject craft)
     {
-        var label = $" • {CraftDisplayName(craft.RecipeName)} ×{craft.Quantity.ToString("N0", CultureInfo.CurrentCulture)}";
+        var label = $" • {CraftDisplayName(craft)} ×{craft.Quantity.ToString("N0", CultureInfo.CurrentCulture)}";
         if (craft.ProgressPercent is int progress) label += $" ({progress}%)";
         return label;
     }
 
-    // The API supplies descriptive recipe names. Keep the original name in CraftProject
-    // for sorting and live updates; simplify it only when rendering the craft label.
-    private static string CraftDisplayName(string recipeName)
+    // The API explicitly supplies crafted products under outputs[].name. Prefer the
+    // actual result item over parsing action words from a descriptive recipe name.
+    // Keep RecipeName unchanged for sorting and other authoritative data handling.
+    private static string CraftDisplayName(CraftProject craft)
     {
-        // Recipes such as "Smash Fine Stone Chunk into Fine Pebbles Output" and
-        // "Clean Sturdy Raw Pelt into Sturdy Cleaned Pelt" describe both the input
-        // and output. Display only the resulting product.
+        if (!string.IsNullOrWhiteSpace(craft.OutputName))
+            return craft.OutputName.Trim();
+
+        // Fallback for recipes without an available output item description.
+        var recipeName = craft.RecipeName;
         const string into = " into ";
         var intoIndex = recipeName.LastIndexOf(into, StringComparison.OrdinalIgnoreCase);
         if (intoIndex >= 0)
@@ -581,15 +585,24 @@ public partial class MainWindow : Window
             if (output.Length > 0) return output;
         }
 
-        // For other recipe actions, strip only complete leading verbs. Leave
-        // unrecognized names and words such as "Forgewood" unchanged.
+        // When a recipe names the result before its ingredients (e.g. "Braid
+        // Sturdy Rope from Sturdy Cloth Strip"), discard the ingredient clause.
         foreach (var prefix in CraftActionPrefixes)
         {
-            if (recipeName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            if (!recipeName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) continue;
+            var result = recipeName[prefix.Length..].Trim();
+            if (result.Length == 0) break;
+            if (prefix.Equals("Upgrade ", StringComparison.OrdinalIgnoreCase))
             {
-                var stripped = recipeName[prefix.Length..].TrimStart();
-                if (stripped.Length > 0) return stripped;
+                const string to = " to ";
+                var toIndex = result.LastIndexOf(to, StringComparison.OrdinalIgnoreCase);
+                if (toIndex >= 0 && toIndex + to.Length < result.Length)
+                    result = result[(toIndex + to.Length)..].Trim();
             }
+            const string from = " from ";
+            var fromIndex = result.IndexOf(from, StringComparison.OrdinalIgnoreCase);
+            if (fromIndex > 0) result = result[..fromIndex].TrimEnd();
+            return result;
         }
         return recipeName;
     }
