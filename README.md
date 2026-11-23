@@ -1,6 +1,6 @@
 # ClaimCRAFTs
 
-**ClaimCRAFTs v0.3.1** is a free, open-source Windows companion for tracking active public crafting projects in **BitCraft Online** claims. Search for a claim, watch its crafting activity, and see who is crafting, all from a compact desktop overlay.
+**ClaimCRAFTs v0.3.2** is a free, open-source Windows companion for tracking active public crafting projects in **BitCraft Online** claims. Search for a claim, watch its crafting activity, and see who is crafting, all from a compact desktop overlay.
 
 ClaimCRAFTs is an independent community project. It is not affiliated with or endorsed by the developers of BitCraft Online.
 
@@ -22,13 +22,19 @@ ClaimCRAFTs is an independent community project. It is not affiliated with or en
 
 ## Download and run
 
-**ClaimCRAFTs v0.3.1 is now available!** Download the latest Windows release from the [Releases page](https://github.com/bris701/ClaimCRAFTs/releases/latest). Extract the ZIP archive and run `ClaimCRAFTs.exe`. No separate .NET installation is required.
+**ClaimCRAFTs v0.3.2 is now available!** Download the latest Windows release from the [Releases page](https://github.com/bris701/ClaimCRAFTs/releases/latest). Extract the ZIP archive and run `ClaimCRAFTs.exe`. No separate .NET installation is required.
 
-The planned Windows build is **self-contained**: it includes the .NET runtime and does not require installing .NET separately just to run it. Windows may display an unfamiliar-publisher warning for unsigned community applications; you can instead build the program yourself using the source instructions below.
+The Windows build is **self-contained**: it includes the .NET runtime and does not require installing .NET separately just to run it. Windows may display an unfamiliar-publisher warning for unsigned community applications; you can instead build the program yourself using the source instructions below.
 
 ### File integrity verification
 
-**ClaimCRAFTs v0.3.1 - `ClaimCRAFTs.exe` (SHA-256):**
+**ClaimCRAFTs v0.3.2 - `ClaimCRAFTs.exe` (SHA-256):**
+
+```text
+CB7266B3B462AF5835E3867A8B6711835726F51766443C662B13BC893F1D8705
+```
+
+**Previous release: [v0.3.1](https://github.com/bris701/ClaimCRAFTs/releases/tag/v0.3.1) - `ClaimCRAFTs.exe` (SHA-256):**
 
 ```text
 1DE8E225EAE2A05755732ADCA22E48DB1386156DF91244B63ED877A5EAFB17CA
