@@ -22,7 +22,8 @@ public sealed record CraftProject(
     long? Progress,
     long? ProgressTotal,
     string Status,
-    DateTimeOffset? LockExpiration)
+    DateTimeOffset? LockExpiration,
+    string? OutputName)
 {
     public int? ProgressPercent => Progress is >= 0 && ProgressTotal is > 0
         ? (int)Math.Clamp(Math.Floor((decimal)Progress.Value * 100 / ProgressTotal.Value + .5m), 0, 100)
