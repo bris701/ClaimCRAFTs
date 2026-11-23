@@ -39,7 +39,8 @@ public partial class MainWindow : Window
         "Carve ", "Mine ", "Assemble ", "Shape ", "Plant ",
         "Grow ", "Harvest ", "Prepare ", "Construct ", "Build ",
         "Polish ", "Spin ", "Crush ", "Grind ", "Render ",
-        "Melt ", "Dye ", "Press ", "Collect ", "Gather "
+        "Melt ", "Dye ", "Press ", "Collect ", "Gather ",
+        "Clean ", "Smash "
     ];
     private LiveFeed? _live;
     private CancellationTokenSource? _selectionToken;
@@ -565,13 +566,23 @@ public partial class MainWindow : Window
         return label;
     }
 
-    // The API supplies descriptive recipe names (e.g. "Split into Simple Wood Log Output").
-    // Remove the action prefix only for display. The original name stays in CraftProject,
-    // so sorting and live updates still work with the authoritative REST data.
+    // The API supplies descriptive recipe names. Keep the original name in CraftProject
+    // for sorting and live updates; simplify it only when rendering the craft label.
     private static string CraftDisplayName(string recipeName)
     {
-        // Match complete leading words, with longer phrases first. Do not modify unknown
-        // recipes or names that happen to begin with part of a verb (e.g. "Forgewood").
+        // Recipes such as "Smash Fine Stone Chunk into Fine Pebbles Output" and
+        // "Clean Sturdy Raw Pelt into Sturdy Cleaned Pelt" describe both the input
+        // and output. Display only the resulting product.
+        const string into = " into ";
+        var intoIndex = recipeName.LastIndexOf(into, StringComparison.OrdinalIgnoreCase);
+        if (intoIndex >= 0)
+        {
+            var output = recipeName[(intoIndex + into.Length)..].Trim();
+            if (output.Length > 0) return output;
+        }
+
+        // For other recipe actions, strip only complete leading verbs. Leave
+        // unrecognized names and words such as "Forgewood" unchanged.
         foreach (var prefix in CraftActionPrefixes)
         {
             if (recipeName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
