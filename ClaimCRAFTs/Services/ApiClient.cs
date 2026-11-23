@@ -14,7 +14,7 @@ public sealed class ApiClient : IDisposable
     public ApiClient()
     {
         _http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        _http.DefaultRequestHeaders.UserAgent.ParseAdd("ClaimCRAFTs/0.3.1");
+        _http.DefaultRequestHeaders.UserAgent.ParseAdd("ClaimCRAFTs/0.3.2");
     }
 
     private async Task<JsonDocument> GetJsonAsync(string path, CancellationToken token)
