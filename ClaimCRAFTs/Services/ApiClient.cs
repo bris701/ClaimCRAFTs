@@ -186,7 +186,8 @@ public sealed class ApiClient : IDisposable
             JsonData.Int64(row, "progress"),
             JsonData.Int64(row, "progress_total"),
             JsonData.String(row, "status") ?? "Active",
-            JsonData.DateTime(row, "timestamp"));
+            JsonData.DateTime(row, "timestamp"),
+            outputName);
         return craft.IsFinished ? null : craft;
     }
 
