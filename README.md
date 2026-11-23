@@ -46,7 +46,7 @@ To verify the downloaded executable, extract the release ZIP, open PowerShell in
 Get-FileHash .\ClaimCRAFTs.exe -Algorithm SHA256
 ```
 
-The resulting hash should match the value above. A matching hash confirms file integrity against the published reference, but does not guarantee the software is malware-free.
+Compare the resulting hash with the value listed for the version you downloaded. A matching hash confirms file integrity against the published reference, but does not guarantee the software is malware-free.
 
 ## Build from source (Windows)
 
