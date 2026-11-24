@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -62,6 +63,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        // Restore after the native window is initialized, when DPI information is available.
+        SourceInitialized += (_, _) => RestoreWindowPlacement();
         WindowTitle.Text = $"ClaimCRAFTs v{typeof(App).Assembly.GetName().Version?.ToString(3) ?? "0.3.1"}";
         Topmost = _settings.AlwaysOnTop;
         UpdatePinButton();
@@ -93,6 +96,7 @@ public partial class MainWindow : Window
 
     private void Shutdown()
     {
+        SaveWindowPlacement();
         _closing = true;
         _heartbeat.Stop();
         _progressBatchTimer.Stop();
@@ -821,6 +825,110 @@ public partial class MainWindow : Window
                 MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
+
+
+    private void SaveWindowPlacement()
+    {
+        // RestoreBounds retains the normal size/position when the window is minimized.
+        var bounds = WindowState == WindowState.Normal
+            ? new Rect(Left, Top, ActualWidth, ActualHeight)
+            : RestoreBounds;
+        if (!ValidWindowBounds(bounds)) return;
+
+        _settings.WindowLeft = bounds.Left;
+        _settings.WindowTop = bounds.Top;
+        _settings.WindowWidth = bounds.Width;
+        _settings.WindowHeight = bounds.Height;
+    }
+
+    private void RestoreWindowPlacement()
+    {
+        // Older settings have no geometry; retain WPF's current first-launch placement.
+        if (_settings.WindowLeft is not double left ||
+            _settings.WindowTop is not double top ||
+            _settings.WindowWidth is not double width ||
+            _settings.WindowHeight is not double height)
+            return;
+
+        if (!ValidWindowBounds(left, top, width, height)) return;
+        var bounds = new Rect(left, top, width, height);
+        if (!HasVisibleTitleBar(bounds))
+        {
+            // A disconnected screen or changed display layout must not hide the app.
+            // Use the primary monitor's usable desktop and preserve size when possible.
+            var work = SystemParameters.WorkArea;
+            width = Math.Clamp(width, MinWidth, Math.Max(MinWidth, work.Width));
+            height = Math.Clamp(height, MinHeight, Math.Max(MinHeight, work.Height));
+            left = work.Left + (work.Width - width) / 2;
+            top = work.Top + (work.Height - height) / 2;
+        }
+
+        WindowStartupLocation = WindowStartupLocation.Manual;
+        Width = width;
+        Height = height;
+        Left = left;
+        Top = top;
+    }
+
+    private static bool ValidWindowBounds(Rect bounds) =>
+        !bounds.IsEmpty && ValidWindowBounds(bounds.Left, bounds.Top, bounds.Width, bounds.Height);
+
+    private static bool ValidWindowBounds(double left, double top, double width, double height) =>
+        double.IsFinite(left) && double.IsFinite(top) &&
+        double.IsFinite(width) && double.IsFinite(height) &&
+        Math.Abs(left) < 100_000 && Math.Abs(top) < 100_000 &&
+        width >= 350 && height >= 365 && width <= 16_384 && height <= 16_384;
+
+    private bool HasVisibleTitleBar(Rect bounds)
+    {
+        // MonitorFromRect checks actual monitor geometry, not just the virtual
+        // desktop bounding rectangle (which can contain gaps between screens).
+        var device = PresentationSource.FromVisual(this)?.CompositionTarget?.TransformToDevice
+            ?? Matrix.Identity;
+        var start = device.Transform(bounds.TopLeft);
+        var end = device.Transform(new Point(bounds.Right, bounds.Top + 34));
+        var titleBar = new NativeRect
+        {
+            Left = (int)Math.Floor(start.X),
+            Top = (int)Math.Floor(start.Y),
+            Right = (int)Math.Ceiling(end.X),
+            Bottom = (int)Math.Ceiling(end.Y)
+        };
+        var monitor = MonitorFromRect(ref titleBar, 0); // MONITOR_DEFAULTTONULL
+        if (monitor == IntPtr.Zero) return false;
+
+        var info = new MonitorInfo { Size = (uint)Marshal.SizeOf<MonitorInfo>() };
+        if (!GetMonitorInfo(monitor, ref info)) return false;
+        // Require enough visible title area to drag the window back into view.
+        var visibleWidth = Math.Min(titleBar.Right, info.Work.Right) -
+                           Math.Max(titleBar.Left, info.Work.Left);
+        var visibleHeight = Math.Min(titleBar.Bottom, info.Work.Bottom) -
+                            Math.Max(titleBar.Top, info.Work.Top);
+        return visibleWidth >= 100 * Math.Abs(device.M11) &&
+               visibleHeight >= 20 * Math.Abs(device.M22);
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativeRect
+    {
+        public int Left, Top, Right, Bottom;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MonitorInfo
+    {
+        public uint Size;
+        public NativeRect Monitor;
+        public NativeRect Work;
+        public uint Flags;
+    }
+
+    [DllImport("user32.dll", ExactSpelling = true)]
+    private static extern IntPtr MonitorFromRect(ref NativeRect rect, uint flags);
+
+    [DllImport("user32.dll", EntryPoint = "GetMonitorInfoW", ExactSpelling = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetMonitorInfo(IntPtr monitor, ref MonitorInfo info);
 
     private void ResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
     {
