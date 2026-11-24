@@ -19,16 +19,35 @@ public static class CraftCategories
         new("Hunting", "Professions", 9, [1559722792]),
         new("Leatherworking", "Professions", 10, [15, 16]),
         new("Fishing", "Professions", 11, [40]),
-        new("Cooking", "Skills", 12, [12, 13, 200031066]),
-        new("Sailing", "Skills", 13, [1837107818]),
-        new("Taming", "Skills", 14, [104950060, 1680198173]),
-        new("Construction", "Skills", 15, [937867074])
+        new("Cooking", "Skills", 13, [12, 13, 200031066]),
+        new("Sailing", "Skills", 14, [1837107818]),
+        new("Taming", "Skills", 15, [104950060, 1680198173]),
+        new("Construction", "Skills", 16, [937867074])
     ];
+
+    // These stations have unique building names and may share function types
+    // with other crafting professions. Match them by station name first.
+    private static readonly CraftCategory ScrappersWorkbench =
+        new("Scrapper's Workbench", "Professions", 12, []);
+    private static readonly Dictionary<string, CraftCategory> NamedStations =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Scrapper's Workbench"] = ScrappersWorkbench,
+            ["Scrapper’s Workbench"] = ScrappersWorkbench,
+            ["Rough Well"] = new("Rough Well", "Skills", 17, []),
+            ["Sturdy Well"] = new("Sturdy Well", "Skills", 18, []),
+            ["Exquisite Well"] = new("Exquisite Well", "Skills", 19, [])
+        };
 
     private static readonly CraftCategory Unknown = new("Other / Unknown", "Other", 99, []);
 
-    public static CraftCategory For(CraftProject project) =>
-        Entries.FirstOrDefault(category => project.FunctionIds.Any(id => category.FunctionIds.Contains(id))) ?? Unknown;
+    public static CraftCategory For(CraftProject project)
+    {
+        if (NamedStations.TryGetValue(project.BuildingName.Trim(), out var namedStation))
+            return namedStation;
+
+        return Entries.FirstOrDefault(category => project.FunctionIds.Any(id => category.FunctionIds.Contains(id))) ?? Unknown;
+    }
 
     public static IEnumerable<IGrouping<CraftCategory, CraftProject>> Group(IEnumerable<CraftProject> projects) =>
         projects.GroupBy(For).OrderBy(group => group.Key.Order);
