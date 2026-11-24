@@ -12,6 +12,11 @@ public sealed class UserSettings
     public double BackgroundOpacity { get; set; } = 100;
     public double TextOpacity { get; set; } = 100;
     public double TextShade { get; set; }
+    // Optional for compatibility with settings files created by earlier versions.
+    public double? WindowLeft { get; set; }
+    public double? WindowTop { get; set; }
+    public double? WindowWidth { get; set; }
+    public double? WindowHeight { get; set; }
 }
 
 public static class SettingsStore
