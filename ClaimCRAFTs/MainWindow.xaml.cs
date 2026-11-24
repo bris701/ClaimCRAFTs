@@ -65,7 +65,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         // Restore after the native window is initialized, when DPI information is available.
         SourceInitialized += (_, _) => RestoreWindowPlacement();
-        WindowTitle.Text = $"ClaimCRAFTs v{typeof(App).Assembly.GetName().Version?.ToString(3) ?? "0.3.1"}";
+        WindowTitle.Text = $"ClaimCRAFTs v{typeof(App).Assembly.GetName().Version?.ToString(3) ?? "0.3.3"}";
         Topmost = _settings.AlwaysOnTop;
         UpdatePinButton();
 
