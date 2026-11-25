@@ -1,6 +1,6 @@
 # ClaimCRAFTs
 
-**ClaimCRAFTs v0.3.3** is a free, open-source Windows companion for tracking active public crafting projects in **BitCraft Online** claims. Search for a claim, watch its crafting activity, and see who is crafting, all from a compact desktop overlay.
+**ClaimCRAFTs v0.3.4** is a free, open-source Windows companion for tracking active public crafting projects in **BitCraft Online** claims. Search for a claim, watch its crafting activity, and see who is crafting, all from a compact desktop overlay.
 
 ClaimCRAFTs is an independent community project. It is not affiliated with or endorsed by the developers of BitCraft Online.
 
@@ -16,21 +16,30 @@ ClaimCRAFTs is an independent community project. It is not affiliated with or en
 - **Live crafting:** Direct connection to ResuBaka's public REST API and MessagePack WebSocket, without your own server or API key.
 - **Live switch:** Pause/resume automatic updates; manual refresh works even when Live is off.
 - **Craft overview:** Public, active, non-passive, unfinished projects grouped by profession and skill, with progress and quantities.
+- **Fixed craft summary:** Active public craft totals and membership counters stay visible while scrolling through the profession and skill lists.
+- **Collapsible categories:** Click any profession or skill heading to collapse or expand its craft list. The display state stays unchanged during live updates and refreshes, without pausing tracking.
+- **Clean product labels:** Displays craft output names without leftover standalone `Output` suffixes.
 - **Special stations:** Scrapper's Workbench appears under Professions; Rough, Sturdy and Exquisite Wells appear individually under Skills.
 - **Membership indicators:** Green for members with storage permission (or the claim owner), orange for members without storage permission, and red for non-members.
-- **Adjustable overlay:** Dark, resizable window with always-on-top, opacity and text shade controls. Preferences are stored locally.
+- **Adjustable overlay:** Dark, resizable window with always-on-top, opacity and text shade controls, including custom dark-themed sliders. Preferences are stored locally.
 - **Window placement memory:** Restores the previous window size and position on startup, including safeguards for minimized windows and disconnected monitors.
 - **Efficient updates:** Applies progress updates without reloading everything, batches notifications, and limits REST refreshes to at least five seconds apart.
 
 ## Download and run
 
-**ClaimCRAFTs v0.3.3 is now available!** Download the latest Windows release from the [Releases page](https://github.com/bris701/ClaimCRAFTs/releases/latest). Extract the ZIP archive and run `ClaimCRAFTs.exe`. No separate .NET installation is required.
+**ClaimCRAFTs v0.3.4 is now available!** Download the latest Windows release from the [Releases page](https://github.com/bris701/ClaimCRAFTs/releases/latest). Extract the ZIP archive and run `ClaimCRAFTs.exe`. No separate .NET installation is required.
 
 The Windows build is **self-contained**: it includes the .NET runtime and does not require installing .NET separately just to run it. Windows may display an unfamiliar-publisher warning for unsigned community applications; you can instead build the program yourself using the source instructions below.
 
 ### File integrity verification
 
-**ClaimCRAFTs v0.3.3 - `ClaimCRAFTs.exe` (SHA-256):**
+**ClaimCRAFTs v0.3.4 - `ClaimCRAFTs.exe` (SHA-256):**
+
+```text
+039493A2F7F530F3C81B955126EBB6B086E844002A69F86A4540290A21438D1A
+```
+
+**Previous release: [v0.3.3](https://github.com/bris701/ClaimCRAFTs/releases/tag/v0.3.3) - `ClaimCRAFTs.exe` (SHA-256):**
 
 ```text
 F172538EB4A9F66FC796F59E09429810C4D8CDDB7618DA6DDDE9C35231E01E56
