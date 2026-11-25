@@ -7,7 +7,7 @@ if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
 }
 $versionText = (& dotnet --version).Trim()
 if ([int]($versionText.Split('.')[0]) -lt 10) { throw ".NET 10 SDK or later required, found $versionText." }
-Write-Host "Building ClaimCRAFTs v0.3.3 for Windows x64 ($versionText)..." -ForegroundColor Cyan
+Write-Host "Building ClaimCRAFTs v0.3.4 for Windows x64 ($versionText)..." -ForegroundColor Cyan
 if (Test-Path $output) { Remove-Item $output -Recurse -Force }
 & dotnet publish $project --configuration Release --runtime win-x64 --self-contained true --output $output `
     -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `

@@ -19,7 +19,7 @@
               MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
         <Grid Margin="9,0,5,0">
           <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-          <TextBlock x:Name="WindowTitle" Text="ClaimCRAFTs v0.3.3" Foreground="#F2F5F9"
+          <TextBlock x:Name="WindowTitle" Text="ClaimCRAFTs v0.3.4" Foreground="#F2F5F9"
                      FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
           <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
             <Button x:Name="PinButton" Content="📌" Style="{StaticResource TitleButton}"
