@@ -43,7 +43,8 @@
         <Grid x:Name="OverviewView">
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
           </Grid.RowDefinitions>
           <!-- Full-width selector: left-aligned claim name and right-aligned U+2BC6 glyph. -->
           <Button Grid.Row="0" Style="{StaticResource ClaimSelectorButton}"
@@ -112,7 +113,9 @@
                   Padding="7,5" Margin="0,0,0,5" Visibility="Collapsed">
             <TextBlock x:Name="ErrorText" Foreground="#FFC2C7" TextWrapping="Wrap" FontSize="10.5"/>
           </Border>
-          <ScrollViewer x:Name="OverviewScroll" Grid.Row="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+          <!-- The summary stays in place while only the categories scroll. -->
+          <ContentControl x:Name="CraftSummaryHost" Grid.Row="3" Visibility="Collapsed" Focusable="False"/>
+          <ScrollViewer x:Name="OverviewScroll" Grid.Row="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <ScrollViewer.Resources><Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource DarkScrollBar}"/></ScrollViewer.Resources>
             <StackPanel x:Name="OverviewContent"/>
           </ScrollViewer>
@@ -141,19 +144,19 @@
               <TextBlock Text="BACKGROUND OPACITY" Foreground="#9BA8B8" FontWeight="Bold" FontSize="10" Margin="0,0,0,2"/>
               <DockPanel Margin="0,0,0,8">
                 <TextBlock x:Name="BackgroundOpacityValue" DockPanel.Dock="Right" Foreground="#DCE4EF" FontSize="10" Width="40" TextAlignment="Right"/>
-                <Slider x:Name="BackgroundOpacitySlider" Minimum="1" Maximum="100" Value="100" TickFrequency="5"
+                <Slider x:Name="BackgroundOpacitySlider" Style="{StaticResource DarkSlider}" Minimum="1" Maximum="100" Value="100" TickFrequency="5"
                         ValueChanged="AppearanceSlider_ValueChanged"/>
               </DockPanel>
               <TextBlock Text="TEXT OPACITY" Foreground="#9BA8B8" FontWeight="Bold" FontSize="10" Margin="0,0,0,2"/>
               <DockPanel Margin="0,0,0,8">
                 <TextBlock x:Name="TextOpacityValue" DockPanel.Dock="Right" Foreground="#DCE4EF" FontSize="10" Width="40" TextAlignment="Right"/>
-                <Slider x:Name="TextOpacitySlider" Minimum="1" Maximum="100" Value="100" TickFrequency="5"
+                <Slider x:Name="TextOpacitySlider" Style="{StaticResource DarkSlider}" Minimum="1" Maximum="100" Value="100" TickFrequency="5"
                         ValueChanged="AppearanceSlider_ValueChanged"/>
               </DockPanel>
               <TextBlock Text="TEXT COLOUR · WHITE → BLACK" Foreground="#9BA8B8" FontWeight="Bold" FontSize="10" Margin="0,0,0,2"/>
               <DockPanel Margin="0,0,0,8">
                 <TextBlock x:Name="TextShadeValue" DockPanel.Dock="Right" Foreground="#DCE4EF" FontSize="10" Width="68" TextAlignment="Right"/>
-                <Slider x:Name="TextShadeSlider" Minimum="0" Maximum="100" Value="0" TickFrequency="5"
+                <Slider x:Name="TextShadeSlider" Style="{StaticResource DarkSlider}" Minimum="0" Maximum="100" Value="0" TickFrequency="5"
                         ValueChanged="AppearanceSlider_ValueChanged"/>
               </DockPanel>
               <Border Background="{DynamicResource SummarySurfaceBrush}" CornerRadius="6" Padding="7,5" Margin="0,0,0,12">
