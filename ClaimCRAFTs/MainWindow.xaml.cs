@@ -26,6 +26,8 @@ public partial class MainWindow : Window
     private readonly SemaphoreSlim _httpThrottle = new(1, 1);
     private readonly Dictionary<string, DateTimeOffset> _handledExpirations = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Run> _craftLabelRuns = new(StringComparer.Ordinal);
+    // Visual-only collapsed state, held across refreshes while the app is running.
+    private readonly HashSet<string> _collapsedCategories = new(StringComparer.Ordinal);
     private readonly Dictionary<string, LiveMessage> _pendingProgress = new(StringComparer.Ordinal);
     private readonly Dictionary<string, SolidColorBrush> _surfaceBrushes = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, SolidColorBrush> _badgeBrushes = new(StringComparer.OrdinalIgnoreCase);
@@ -124,6 +126,7 @@ public partial class MainWindow : Window
         _progressBatchTimer.Stop();
         _pendingProgress.Clear();
         _craftLabelRuns.Clear();
+        _collapsedCategories.Clear(); // Start each newly selected claim expanded.
         _handledExpirations.Clear();
         _snapshotOnline = false;
         _liveConnected = false;
@@ -470,6 +473,8 @@ public partial class MainWindow : Window
         _craftLabelRuns.Clear();
         if (_snapshot is null)
         {
+            CraftSummaryHost.Content = null;
+            CraftSummaryHost.Visibility = Visibility.Collapsed;
             OverviewContent.Children.Add(InfoCard(_selectedClaimId is null
                 ? "Select a claim in Settings to begin monitoring public crafts."
                 : "Loading public crafting data…"));
@@ -491,7 +496,9 @@ public partial class MainWindow : Window
         counts.Children.Add(CountBadge($"No-Perms {bees}", OwnerKind.NoPermissions));
         counts.Children.Add(CountBadge($"Non-members {others}", OwnerKind.NonMember));
         header.Children.Add(counts);
-        OverviewContent.Children.Add(Card(header, "#202A37", new Thickness(0, 0, 0, 2), new Thickness(7, 4, 7, 2)));
+        // Keep counts above the scrolling profession/skill groups.
+        CraftSummaryHost.Content = Card(header, "#202A37", new Thickness(0, 0, 0, 2), new Thickness(7, 4, 7, 2));
+        CraftSummaryHost.Visibility = Visibility.Visible;
 
         if (projects.Count == 0)
         {
@@ -507,16 +514,50 @@ public partial class MainWindow : Window
                 OverviewContent.Children.Add(SectionHeading(section));
             }
             var stack = new StackPanel();
-            stack.Children.Add(DisplayText(new TextBlock
+            var categoryKey = $"{group.Key.Section}:{group.Key.Name}";
+            var collapsed = _collapsedCategories.Contains(categoryKey);
+
+            var categoryTitle = new StackPanel { Orientation = Orientation.Horizontal };
+            var arrow = DisplayText(new TextBlock
             {
-                Text = group.Key.Name,
-                FontSize = 10.5,
-                FontWeight = FontWeights.SemiBold,
-                Margin = new Thickness(0, 0, 0, 3)
+                Text = collapsed ? "▸" : "▾", FontFamily = new FontFamily("Segoe UI Symbol"),
+                FontSize = 11, Width = 15, VerticalAlignment = VerticalAlignment.Center
+            });
+            categoryTitle.Children.Add(arrow);
+            categoryTitle.Children.Add(DisplayText(new TextBlock
+            {
+                Text = group.Key.Name, FontSize = 10.5, FontWeight = FontWeights.SemiBold,
+                VerticalAlignment = VerticalAlignment.Center
             }));
+
+            var rows = new StackPanel
+            {
+                // All craft rows exist and receive progress updates, even while hidden.
+                Visibility = collapsed ? Visibility.Collapsed : Visibility.Visible
+            };
             foreach (var craft in group.OrderBy(c => OwnerName(c), StringComparer.OrdinalIgnoreCase)
                          .ThenBy(c => c.RecipeName, StringComparer.OrdinalIgnoreCase))
-                stack.Children.Add(CraftLine(craft));
+                rows.Children.Add(CraftLine(craft));
+
+            var toggle = new Button
+            {
+                Content = categoryTitle,
+                Style = (Style)FindResource("CraftCategoryToggleButton"),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(0, 0, 0, 3),
+                ToolTip = "Expand or collapse this category"
+            };
+            toggle.Click += (_, _) =>
+            {
+                var collapsing = rows.Visibility == Visibility.Visible;
+                rows.Visibility = collapsing ? Visibility.Collapsed : Visibility.Visible;
+                arrow.Text = collapsing ? "▸" : "▾";
+                if (collapsing) _collapsedCategories.Add(categoryKey);
+                else _collapsedCategories.Remove(categoryKey);
+            };
+
+            stack.Children.Add(toggle);
+            stack.Children.Add(rows);
             OverviewContent.Children.Add(Card(stack, "#171E28", new Thickness(0, 0, 0, 2), new Thickness(6, 3, 6, 3)));
         }
         // Let WPF arrange the updated tree during its normal layout pass.
@@ -566,7 +607,12 @@ public partial class MainWindow : Window
 
     private static string CraftLabel(CraftProject craft)
     {
-        var label = $" • {CraftDisplayName(craft)} ×{craft.Quantity.ToString("N0", CultureInfo.CurrentCulture)}";
+        var name = CraftDisplayName(craft).Trim();
+        // Some API item names still carry an extra standalone "Output" suffix.
+        // Strip only that suffix, never part of the actual product name.
+        while (name.EndsWith(" Output", StringComparison.OrdinalIgnoreCase))
+            name = name[..^" Output".Length].TrimEnd();
+        var label = $" • {name} ×{craft.Quantity.ToString("N0", CultureInfo.CurrentCulture)}";
         if (craft.ProgressPercent is int progress) label += $" ({progress}%)";
         return label;
     }
