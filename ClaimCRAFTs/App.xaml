@@ -78,6 +78,118 @@
         </Style>
 
 
+        <!-- Sliders match the compact dark scrollbars, with a filled track and rounded thumb. -->
+        <Style x:Key="DarkSliderThumb" TargetType="{x:Type Thumb}">
+            <Setter Property="Width" Value="13" />
+            <Setter Property="Height" Value="13" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border x:Name="ThumbFill" Width="13" Height="13" Background="#8794FF"
+                                BorderBrush="#C3CAFF" BorderThickness="1" CornerRadius="7" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ThumbFill" Property="Background" Value="#A5B0FF" />
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="ThumbFill" Property="Background" Value="#C1C9FF" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DarkSliderFilledTrack" TargetType="{x:Type RepeatButton}">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Border Height="5" Background="#6576EB" CornerRadius="3"
+                                VerticalAlignment="Center" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DarkSliderEmptyTrack" TargetType="{x:Type RepeatButton}">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Border Height="5" Background="#303D50" CornerRadius="3"
+                                VerticalAlignment="Center" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DarkSlider" TargetType="{x:Type Slider}">
+            <Setter Property="Height" Value="18" />
+            <Setter Property="IsMoveToPointEnabled" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Slider}">
+                        <Grid Height="18" SnapsToDevicePixels="True">
+                            <Track x:Name="PART_Track" Orientation="Horizontal"
+                                   VerticalAlignment="Center"
+                                   Minimum="{TemplateBinding Minimum}"
+                                   Maximum="{TemplateBinding Maximum}"
+                                   Value="{TemplateBinding Value}"
+                                   IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="Slider.DecreaseLarge"
+                                                  Style="{StaticResource DarkSliderFilledTrack}" />
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource DarkSliderThumb}" />
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="Slider.IncreaseLarge"
+                                                  Style="{StaticResource DarkSliderEmptyTrack}" />
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Category headings are keyboard-accessible buttons without default WPF chrome. -->
+        <Style x:Key="CraftCategoryToggleButton" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="2,1" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="HoverSurface" Background="{TemplateBinding Background}"
+                                CornerRadius="4" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="HoverSurface" Property="Background" Value="#303B4A" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="HoverSurface" Property="Background" Value="#303B4A" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="TitleButton" TargetType="Button">
             <Setter Property="Width" Value="25" />
             <Setter Property="Height" Value="24" />
